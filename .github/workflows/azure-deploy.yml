@@ -1,0 +1,64 @@
+name: Deploy infra + mock (Azure)
+
+# Provisions the free-tier infra (Static Web App, Log Analytics, Container Apps env,
+# maskinporten-mock container app) and rolls the mock to a new image tag.
+# Auth via OIDC (no client secret). Requires repo secrets AZURE_CLIENT_ID,
+# AZURE_TENANT_ID, AZURE_SUBSCRIPTION_ID and vars AZURE_RESOURCE_GROUP, AZURE_LOCATION.
+
+on:
+  workflow_dispatch:
+    inputs:
+      imageTag:
+        description: 'maskinporten-mock image tag to deploy'
+        default: 'latest'
+  workflow_run:
+    workflows: ['Docker (mock)']
+    types: [completed]
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP }}
+  LOCATION: ${{ vars.AZURE_LOCATION }}
+  IMAGE_TAG: ${{ github.event.inputs.imageTag || 'latest' }}
+
+jobs:
+  deploy:
+    # For workflow_run, only proceed if the upstream build succeeded.
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Ensure resource group
+        run: az group create -n "$RESOURCE_GROUP" -l "$LOCATION" -o none
+      - name: Deploy Bicep
+        run: |
+          az deployment group create \
+            -g "$RESOURCE_GROUP" \
+            --template-file infra/main.bicep \
+            --parameters mockImage=ghcr.io/${{ github.repository_owner }}/maskinporten-mock:${IMAGE_TAG} \
+            -o none
+      - name: Roll mock to the new image
+        run: |
+          az containerapp update \
+            -g "$RESOURCE_GROUP" -n maskinporten-mock \
+            --image ghcr.io/${{ github.repository_owner }}/maskinporten-mock:${IMAGE_TAG} \
+            -o none
+      - name: Re-bind mock custom domain (if configured)
+        if: ${{ vars.MOCK_CUSTOM_DOMAIN != '' }}
+        run: |
+          # An RG-scope Bicep deploy can drop ingress.customDomains; re-bind here.
+          # The managed certificate persists at the environment level.
+          echo "Re-bind ${{ vars.MOCK_CUSTOM_DOMAIN }} — see infra/README.md for the az commands."
+      - name: Smoke test the mock
+        run: |
+          FQDN=$(az containerapp show -g "$RESOURCE_GROUP" -n maskinporten-mock --query properties.configuration.ingress.fqdn -o tsv)
+          echo "Mock FQDN resolved."
+          curl -fsS "https://$FQDN/.well-known/oauth-authorization-server"

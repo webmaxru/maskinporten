@@ -1,4 +1,4 @@
-name: Deploy wizard (Pages)
+name: Deploy wizard (Azure Static Web Apps)
 
 on:
   push:
@@ -6,20 +6,14 @@ on:
     paths:
       - 'apps/wizard/**'
       - 'packages/scopes-catalogue/**'
-      - '.github/workflows/pages.yml'
+      - '.github/workflows/swa-deploy.yml'
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: pages
-  cancel-in-progress: true
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -31,16 +25,11 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter maskinporten-scopes build
       - run: pnpm --filter @wizard/site build
-      - uses: actions/upload-pages-artifact@v3
+      - name: Deploy to Azure Static Web Apps
+        uses: Azure/static-web-apps-deploy@v1
         with:
-          path: apps/wizard/dist
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          action: upload
+          app_location: apps/wizard/dist
+          skip_app_build: true
+          skip_api_build: true
