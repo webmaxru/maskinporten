@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Maskinporten Developer-Experience Kit — a TypeScript client, a credential-free local mock, and a scope wizard for Norway's Maskinporten.",
+  "description": "Maskinporten Tools — a TypeScript client, a credential-free local mock, and a scope wizard for Norway's Maskinporten.",
   "engines": {
     "node": ">=20"
   },

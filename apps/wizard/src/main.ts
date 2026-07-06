@@ -1,139 +1,272 @@
+import './style.css';
+import { decodeJwt, decodeProtectedHeader, generateKeyPair, SignJWT } from 'jose';
 import { findUseCase, getCatalogue, type UseCase } from 'maskinporten-wizard';
 
-const catalogue = getCatalogue();
-const app = globalThis.document.querySelector<HTMLDivElement>('#app');
+const MOCK_URL =
+  'https://maskinporten-mock.ambitiousflower-539d08fc.swedencentral.azurecontainerapps.io';
+
+const byId = <T extends HTMLElement>(id: string): T | null => document.getElementById(id) as T | null;
+
+/* -------------------------------------------------------------------------- */
+/* small DOM helper (textContent-safe)                                         */
+/* -------------------------------------------------------------------------- */
 
 function el<K extends keyof HTMLElementTagNameMap>(
-  tagName: K,
+  tag: K,
   options: { className?: string; text?: string; href?: string } = {},
 ): HTMLElementTagNameMap[K] {
-  const element = globalThis.document.createElement(tagName);
-
-  if (options.className) {
-    element.className = options.className;
+  const node = document.createElement(tag);
+  if (options.className) node.className = options.className;
+  if (options.text) node.textContent = options.text;
+  if (options.href && node instanceof HTMLAnchorElement) {
+    node.href = options.href;
+    node.target = '_blank';
+    node.rel = 'noreferrer';
   }
-
-  if (options.text) {
-    element.textContent = options.text;
-  }
-
-  if (options.href && element instanceof globalThis.HTMLAnchorElement) {
-    element.href = options.href;
-    element.target = '_blank';
-    element.rel = 'noreferrer';
-  }
-
-  return element;
+  return node;
 }
 
-function renderList(items: string[], className?: string): HTMLUListElement {
-  const list = el('ul', { className });
+function slab(title: string, body: HTMLElement, mono = false): HTMLElement {
+  const box = el('div', { className: mono ? 'slab code' : 'slab' });
+  box.append(el('h4', { text: title }), body);
+  return box;
+}
 
+function list(items: string[]): HTMLUListElement {
+  const ul = el('ul');
+  for (const item of items) ul.append(el('li', { text: item }));
+  return ul;
+}
+
+function linkList(items: string[]): HTMLUListElement {
+  const ul = el('ul');
   for (const item of items) {
-    list.append(el('li', { text: item }));
+    const li = el('li');
+    li.append(el('a', { text: item, href: item }));
+    ul.append(li);
   }
-
-  return list;
+  return ul;
 }
 
-function renderLinks(links: string[]): HTMLUListElement {
-  const list = el('ul');
-
-  for (const link of links) {
-    const item = el('li');
-    item.append(el('a', { text: link, href: link }));
-    list.append(item);
-  }
-
-  return list;
-}
-
-function renderSection(title: string, content: HTMLElement): HTMLElement {
-  const section = el('section', { className: 'panel' });
-  section.append(el('h2', { text: title }), content);
-  return section;
-}
+/* -------------------------------------------------------------------------- */
+/* scope wizard                                                                */
+/* -------------------------------------------------------------------------- */
 
 function renderUseCase(useCase: UseCase, target: HTMLElement): void {
   target.replaceChildren();
   target.append(
-    el('h2', { className: 'use-case-title', text: useCase.title }),
-    el('p', { className: 'audience', text: `Audience: ${useCase.audience ?? 'general'}` }),
-    renderSection('Maskinporten scopes', renderList(useCase.scopes, 'code-list')),
+    el('h3', { className: 'usecase-title', text: useCase.title }),
+    el('p', { className: 'muted', text: `Audience: ${useCase.audience ?? 'general'}` }),
+    slab('Maskinporten scopes', list(useCase.scopes), true),
   );
-
   if (useCase.altinnResources?.length) {
-    target.append(renderSection('Altinn resource URNs', renderList(useCase.altinnResources, 'code-list')));
+    target.append(slab('Altinn resource URNs', list(useCase.altinnResources), true));
   }
-
   target.append(
-    renderSection('Request access from', renderList(useCase.requestFrom)),
-    renderSection('Registration steps', renderList(useCase.steps)),
-    renderSection('Portals', renderLinks(useCase.portals)),
+    slab('Request access from', list(useCase.requestFrom)),
+    slab('Registration steps', list(useCase.steps)),
+    slab('Portals', linkList(useCase.portals)),
   );
-
   if (useCase.notes) {
-    target.append(renderSection('Notes', el('p', { text: useCase.notes })));
+    target.append(slab('Notes', el('p', { className: 'muted', text: useCase.notes })));
   }
 }
 
-function render(): void {
-  if (!app) {
-    return;
-  }
+function initWizard(): void {
+  const select = byId<HTMLSelectElement>('wizard-select');
+  const result = byId<HTMLDivElement>('wizard-result');
+  if (!select || !result) return;
 
-  const style = el('style', {
-    text: `
-      :root { color-scheme: dark; font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
-      body { margin: 0; background: radial-gradient(circle at top, #1f3b55 0, #07111f 42rem); color: #eef7ff; }
-      main { width: min(62rem, calc(100% - 2rem)); margin: 0 auto; padding: 4rem 0; }
-      h1 { margin: 0 0 0.75rem; font-size: clamp(2.25rem, 6vw, 4.5rem); letter-spacing: -0.05em; }
-      h2 { margin: 0 0 0.75rem; font-size: 1rem; color: #9fddff; text-transform: uppercase; letter-spacing: 0.08em; }
-      p { line-height: 1.6; color: #c5d7e8; }
-      label { display: block; margin: 2rem 0 0.5rem; font-weight: 700; }
-      select { width: 100%; border: 1px solid #38566f; border-radius: 0.9rem; background: #102033; color: #fff; padding: 0.9rem 1rem; font: inherit; }
-      a { color: #72d5ff; }
-      .lede { max-width: 44rem; }
-      .result { display: grid; gap: 1rem; margin-top: 1.5rem; }
-      .panel { border: 1px solid rgba(145, 205, 255, 0.18); border-radius: 1rem; background: rgba(7, 17, 31, 0.72); padding: 1rem; box-shadow: 0 1rem 4rem rgba(0, 0, 0, 0.24); }
-      .use-case-title { color: #fff; font-size: 1.6rem; text-transform: none; letter-spacing: -0.02em; }
-      .audience { margin-top: -0.25rem; }
-      ul { margin: 0; padding-left: 1.25rem; }
-      li { margin: 0.45rem 0; line-height: 1.5; }
-      .code-list li { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; color: #d7f7ff; overflow-wrap: anywhere; }
-    `,
-  });
-  const main = el('main');
-  const selectElement = el('select');
-  const result = el('div', { className: 'result' });
-
+  const catalogue = getCatalogue();
   for (const useCase of catalogue.useCases) {
     const option = el('option', { text: useCase.title });
     option.value = useCase.id;
-    selectElement.append(option);
+    select.append(option);
   }
 
-  selectElement.addEventListener('change', () => {
-    const useCase = findUseCase(selectElement.value);
-
-    if (useCase) {
-      renderUseCase(useCase, result);
-    }
+  select.addEventListener('change', () => {
+    const useCase = findUseCase(select.value);
+    if (useCase) renderUseCase(useCase, result);
   });
 
-  main.append(
-    el('h1', { text: 'Maskinporten scope wizard' }),
-    el('p', {
-      className: 'lede',
-      text: 'Choose an integration goal to see the scopes, Altinn resources, authorities, portals, and registration steps to prepare before coding.',
-    }),
-    el('label', { text: 'Use-case' }),
-    selectElement,
-    result,
-  );
-
-  app.replaceChildren(style, main);
   renderUseCase(catalogue.useCases[0], result);
 }
 
-render();
+/* -------------------------------------------------------------------------- */
+/* in-browser token grant against the live mock                                */
+/* -------------------------------------------------------------------------- */
+
+interface TokenResult {
+  accessToken: string;
+  header: Record<string, unknown>;
+  payload: Record<string, unknown>;
+  expiresIn: number;
+}
+
+async function issueToken(): Promise<TokenResult> {
+  const { privateKey } = await generateKeyPair('RS256', { extractable: true });
+  const now = Math.floor(Date.now() / 1000);
+  const assertion = await new SignJWT({ scope: 'demo:scope' })
+    .setProtectedHeader({ alg: 'RS256', kid: 'browser-demo' })
+    .setIssuer('playground-demo')
+    .setAudience(`${MOCK_URL}/`)
+    .setIssuedAt(now)
+    .setExpirationTime(now + 100)
+    .setJti(crypto.randomUUID())
+    .sign(privateKey);
+
+  const body = new URLSearchParams({
+    grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+    assertion,
+  });
+  const response = await fetch(`${MOCK_URL}/token`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    body,
+  });
+  if (!response.ok) {
+    throw new Error(`Mock returned HTTP ${response.status}: ${await response.text()}`);
+  }
+  const json = (await response.json()) as { access_token: string; expires_in: number };
+  return {
+    accessToken: json.access_token,
+    header: decodeProtectedHeader(json.access_token) as Record<string, unknown>,
+    payload: decodeJwt(json.access_token) as Record<string, unknown>,
+    expiresIn: json.expires_in,
+  };
+}
+
+/* -------------------------------------------------------------------------- */
+/* hero pass                                                                   */
+/* -------------------------------------------------------------------------- */
+
+function initHeroPass(): void {
+  const button = byId<HTMLButtonElement>('issue-pass');
+  const passCard = byId<HTMLDivElement>('hero-pass');
+  const body = byId<HTMLDivElement>('pass-body');
+  if (!button || !passCard || !body) return;
+
+  button.addEventListener('click', () => {
+    void (async () => {
+      button.disabled = true;
+      body.textContent = 'Signing a grant and requesting a token…';
+      try {
+        const { payload, header, accessToken } = await issueToken();
+        const exp = typeof payload.exp === 'number' ? new Date(payload.exp * 1000) : undefined;
+        body.replaceChildren();
+        const lines: Array<[string, string]> = [
+          ['sub', String(payload.sub ?? '—')],
+          ['scope', String(payload.scope ?? '—')],
+          ['alg', String(header.alg ?? '—')],
+          ['expires', exp ? exp.toLocaleTimeString() : '—'],
+        ];
+        for (const [key, value] of lines) {
+          const row = el('div');
+          row.append(el('span', { className: 'k', text: `${key.padEnd(8)} ` }), document.createTextNode(value));
+          body.append(row);
+        }
+        const token = el('div', { className: 'dim', text: `\n${accessToken.slice(0, 44)}…` });
+        body.append(token);
+        passCard.classList.add('stamped');
+      } catch (error) {
+        body.textContent =
+          error instanceof Error ? error.message : 'Could not reach the mock. Try again shortly.';
+      } finally {
+        button.disabled = false;
+      }
+    })();
+  });
+}
+
+/* -------------------------------------------------------------------------- */
+/* mock playground                                                             */
+/* -------------------------------------------------------------------------- */
+
+function initPlayground(): void {
+  const output = byId<HTMLPreElement>('pg-output');
+  const status = byId<HTMLDivElement>('pg-status');
+  const statusText = byId<HTMLSpanElement>('pg-status-text');
+  const base = byId<HTMLParagraphElement>('pg-base');
+  if (!output || !status || !statusText || !base) return;
+
+  base.textContent = MOCK_URL;
+
+  const setStatus = (ok: boolean, text: string): void => {
+    status.hidden = false;
+    status.className = `status ${ok ? 'ok' : 'err'}`;
+    statusText.textContent = text;
+  };
+
+  const show = (value: unknown): void => {
+    output.textContent = typeof value === 'string' ? value : JSON.stringify(value, null, 2);
+  };
+
+  const getJson = async (path: string, label: string): Promise<void> => {
+    output.textContent = `GET ${path}\n…`;
+    try {
+      const response = await fetch(`${MOCK_URL}${path}`);
+      const text = await response.text();
+      setStatus(response.ok, `${label} — HTTP ${response.status}`);
+      try {
+        show(JSON.parse(text));
+      } catch {
+        show(text);
+      }
+    } catch (error) {
+      setStatus(false, 'Request failed');
+      show(error instanceof Error ? error.message : 'Network or CORS error.');
+    }
+  };
+
+  const actions: Record<string, () => Promise<void>> = {
+    discovery: () => getJson('/.well-known/oauth-authorization-server', 'Discovery'),
+    jwks: () => getJson('/jwks', 'JWKS'),
+    health: () => getJson('/health', 'Health'),
+    async token() {
+      output.textContent = 'Signing a grant in your browser and POSTing /token…';
+      try {
+        const result = await issueToken();
+        setStatus(true, `Token issued — HTTP 200 · expires in ${result.expiresIn}s`);
+        show({ header: result.header, payload: result.payload, access_token: `${result.accessToken.slice(0, 48)}…` });
+      } catch (error) {
+        setStatus(false, 'Token request failed');
+        show(error instanceof Error ? error.message : 'Request failed.');
+      }
+    },
+    async error() {
+      output.textContent = 'POST /token?scenario=unknown-scope …';
+      try {
+        const body = new URLSearchParams({
+          grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+          assertion: 'demo',
+        });
+        const response = await fetch(`${MOCK_URL}/token?scenario=unknown-scope`, {
+          method: 'POST',
+          headers: { 'content-type': 'application/x-www-form-urlencoded' },
+          body,
+        });
+        const text = await response.text();
+        setStatus(false, `Rejected as designed — HTTP ${response.status}`);
+        try {
+          show(JSON.parse(text));
+        } catch {
+          show(text);
+        }
+      } catch (error) {
+        setStatus(false, 'Request failed');
+        show(error instanceof Error ? error.message : 'Network or CORS error.');
+      }
+    },
+  };
+
+  for (const button of document.querySelectorAll<HTMLButtonElement>('[data-pg]')) {
+    button.addEventListener('click', () => {
+      const action = actions[button.dataset.pg ?? ''];
+      if (action) void action();
+    });
+  }
+}
+
+initWizard();
+initHeroPass();
+initPlayground();

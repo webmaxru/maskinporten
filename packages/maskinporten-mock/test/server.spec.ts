@@ -113,4 +113,21 @@ describe('maskinporten-mock', () => {
     const body = (await response.json()) as { status: string };
     expect(body.status).toBe('ok');
   });
+
+  it('responds to CORS preflight requests', async () => {
+    server = await startMockServer();
+    const response = await fetch(`${server.url}/token`, { method: 'OPTIONS' });
+
+    expect(response.status).toBe(204);
+    expect(response.headers.get('access-control-allow-origin')).toBe('*');
+    expect(await response.text()).toBe('');
+  });
+
+  it('includes CORS headers on normal responses', async () => {
+    server = await startMockServer();
+    const response = await fetch(`${server.url}/health`);
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get('access-control-allow-origin')).toBe('*');
+  });
 });

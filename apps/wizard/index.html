@@ -3,10 +3,228 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Maskinporten scope wizard</title>
+    <title>Maskinporten Tools — the machine gate, made passable</title>
+    <meta
+      name="description"
+      content="An open-source developer toolkit for Norway's Maskinporten: a TypeScript client, a credential-free local mock, and a scope wizard for the OAuth2 backbone behind Norwegian public-sector APIs."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Maskinporten Tools" />
+    <meta
+      property="og:description"
+      content="A TypeScript client, a credential-free mock, and a scope wizard for Norway's Maskinporten."
+    />
+    <meta property="og:url" content="https://maskinporten.isainative.dev" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
-    <div id="app"></div>
+    <header class="nav">
+      <div class="container nav-inner">
+        <a class="brand" href="#top"><span class="gate" aria-hidden="true"></span> Maskinporten Tools</a>
+        <nav class="nav-links">
+          <a href="#toolkit" class="hide-sm">Toolkit</a>
+          <a href="#wizard">Wizard</a>
+          <a href="#playground">Playground</a>
+          <a href="#docs" class="hide-sm">Docs</a>
+          <a href="https://github.com/webmaxru/maskinporten">GitHub</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="top">
+      <!-- HERO -->
+      <section class="hero">
+        <div class="container hero-grid">
+          <div>
+            <p class="eyebrow">Developer toolkit · Norway</p>
+            <h1>The machine gate,<br /><span class="thin">made passable.</span></h1>
+            <p class="sub">
+              <strong>Maskinporten</strong> is the OAuth2 machine-to-machine gate in front of ~50
+              Norwegian public-sector APIs. This toolkit gets you through it: a TypeScript client, a
+              credential-free mock, and a wizard for the scopes you need.
+            </p>
+            <div class="hero-cta">
+              <a class="btn btn-primary" href="#playground">Issue a pass in your browser</a>
+              <a class="btn btn-ghost" href="https://github.com/webmaxru/maskinporten">View on GitHub</a>
+            </div>
+          </div>
+
+          <!-- signature: a stamped machine pass, filled by a live token from the hosted mock -->
+          <div class="pass" id="hero-pass">
+            <div class="pass-head">
+              <span>Maskinporten · access pass</span>
+              <span id="pass-env">MOCK</span>
+            </div>
+            <div class="pass-body" id="pass-body">
+Press <strong>Issue a pass</strong> to request a real token from the
+live mock — generated and signed in your browser, no credentials.
+            </div>
+            <div class="seal" id="pass-seal" aria-hidden="true">GYLDIG<br />· MOCK ·</div>
+            <div style="margin-top: 1.1rem">
+              <button class="btn btn-primary btn-sm" id="issue-pass" type="button">Issue a pass</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- WHY -->
+      <section class="section" id="why">
+        <div class="container section-head">
+          <p class="eyebrow">Why</p>
+          <h2 class="section-title">Getting a token shouldn't be a rite of passage</h2>
+          <p class="section-lede">
+            To call a Maskinporten-protected API you build a JWT grant with exactly the right claims,
+            sign it, and exchange it — and for Altinn, exchange it again. Java and .NET have libraries
+            for this. Node/TypeScript didn't, so every team hand-rolls the same glue — and testing it
+            means real organisation credentials against a test environment.
+          </p>
+          <p class="section-lede" style="margin-top: 1rem">
+            Maskinporten Tools removes that: one call for a cached token, a local mock so you build
+            and CI-test with <strong>zero credentials</strong>, and a wizard that tells you which
+            scopes and Altinn resources your use-case needs.
+          </p>
+        </div>
+      </section>
+
+      <!-- TOOLKIT -->
+      <section class="section" id="toolkit">
+        <div class="container">
+          <div class="section-head">
+            <p class="eyebrow">Toolkit</p>
+            <h2 class="section-title">Three tools, one gate</h2>
+          </div>
+          <div class="grid-3">
+            <div class="card">
+              <h3>maskinporten</h3>
+              <p>
+                The client. One call → a cached, auto-renewing token. Altinn token exchange and
+                <em>systembruker</em> built in.
+              </p>
+              <div class="install">npm i maskinporten</div>
+            </div>
+            <div class="card">
+              <h3>maskinporten-mock</h3>
+              <p>
+                A credential-free mock of the token endpoint. Develop and CI-test offline — the same
+                mock this page talks to.
+              </p>
+              <div class="install">npx maskinporten-mock</div>
+            </div>
+            <div class="card">
+              <h3>maskinporten-wizard</h3>
+              <p>
+                A CLI that does what a page can't: <code>init</code> scaffolds a keypair + .env;
+                <code>doctor</code> runs a real token request and decodes the failure.
+              </p>
+              <div class="install">npx maskinporten-wizard doctor</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- WIZARD -->
+      <section class="section" id="wizard">
+        <div class="container">
+          <div class="section-head">
+            <p class="eyebrow">Wizard</p>
+            <h2 class="section-title">Which scopes do I need?</h2>
+            <p class="section-lede">
+              Pick an integration goal. The wizard lists the exact Maskinporten scopes, Altinn
+              resource URNs, which authority grants them, and the registration steps to do first.
+            </p>
+          </div>
+          <div class="wizard-controls">
+            <label for="wizard-select">Integration goal</label>
+            <select id="wizard-select"></select>
+          </div>
+          <div class="result" id="wizard-result"></div>
+        </div>
+      </section>
+
+      <!-- PLAYGROUND -->
+      <section class="section" id="playground">
+        <div class="container">
+          <div class="section-head">
+            <p class="eyebrow">Playground</p>
+            <h2 class="section-title">Poke the live mock</h2>
+            <p class="section-lede">
+              It behaves like the real Maskinporten token endpoint — discovery, JWKS, and the
+              JWT-bearer grant — without any of the setup. Every call below hits the hosted mock from
+              your browser.
+            </p>
+          </div>
+          <div class="pg-layout">
+            <div class="pg-actions">
+              <button class="btn btn-ghost btn-sm" data-pg="discovery" type="button">Discovery</button>
+              <button class="btn btn-ghost btn-sm" data-pg="jwks" type="button">JWKS</button>
+              <button class="btn btn-ghost btn-sm" data-pg="health" type="button">Health</button>
+              <button class="btn btn-primary btn-sm" data-pg="token" type="button">Issue a token</button>
+              <button class="btn btn-ghost btn-sm" data-pg="error" type="button">Force an error</button>
+              <p class="endpoint" id="pg-base"></p>
+            </div>
+            <div>
+              <div class="status" id="pg-status" hidden><span class="dot"></span><span id="pg-status-text"></span></div>
+              <pre class="pg-output" id="pg-output">Choose a call on the left. Responses show here, exactly as the mock returns them.</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- DOCS -->
+      <section class="section" id="docs">
+        <div class="container">
+          <div class="section-head">
+            <p class="eyebrow">Docs</p>
+            <h2 class="section-title">Read before you register</h2>
+            <p class="section-lede">
+              Calling real Maskinporten needs a Norwegian organisation number, a signing key, a
+              registered client, and pre-allocated scopes. These cover the whole path.
+            </p>
+          </div>
+          <div class="doc-links">
+            <a href="https://github.com/webmaxru/maskinporten/blob/main/docs/quickstart.md"
+              ><span>Quickstart</span><span class="arrow">→</span></a
+            >
+            <a href="https://github.com/webmaxru/maskinporten/blob/main/docs/prerequisites.md"
+              ><span>Register in advance (secrets &amp; tokens)</span><span class="arrow">→</span></a
+            >
+            <a href="https://github.com/webmaxru/maskinporten/blob/main/packages/maskinporten/README.md"
+              ><span>Client reference</span><span class="arrow">→</span></a
+            >
+            <a href="https://github.com/webmaxru/maskinporten/blob/main/packages/maskinporten-mock/README.md"
+              ><span>Mock reference</span><span class="arrow">→</span></a
+            >
+            <a href="https://github.com/webmaxru/maskinporten/blob/main/packages/scopes-catalogue/README.md"
+              ><span>Wizard &amp; catalogue</span><span class="arrow">→</span></a
+            >
+            <a href="https://github.com/webmaxru/maskinporten"
+              ><span>Source on GitHub</span><span class="arrow">→</span></a
+            >
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="row">
+          <span>Maskinporten Tools — MIT. Made in Norway by <a href="https://www.linkedin.com/in/webmax/">Maxim Salnikov</a>.</span>
+          <span><a href="https://github.com/webmaxru/maskinporten">github.com/webmaxru/maskinporten</a></span>
+        </div>
+        <p class="disclaimer">
+          An independent open-source project — not affiliated with or endorsed by Digdir. The hosted
+          mock issues fake tokens for testing only; never send it real secrets.
+        </p>
+      </div>
+    </footer>
+
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
+

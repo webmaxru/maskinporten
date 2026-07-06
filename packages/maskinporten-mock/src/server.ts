@@ -77,6 +77,18 @@ export const startMockServer = async (options: MockServerOptions = {}): Promise<
 
   let baseUrl = '';
   const server = createServer((request, response) => {
+    response.setHeader('Access-Control-Allow-Origin', '*');
+    response.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    response.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Mock-Scenario');
+    response.setHeader('Access-Control-Max-Age', '86400');
+    response.setHeader('Vary', 'Origin');
+
+    if (request.method === 'OPTIONS') {
+      response.writeHead(204);
+      response.end();
+      return;
+    }
+
     void (async () => {
       const url = new URL(request.url ?? '/', baseUrl || 'http://127.0.0.1');
       const scenarioHeader = Array.isArray(request.headers['x-mock-scenario'])

@@ -32,6 +32,9 @@ importers:
 
   apps/wizard:
     dependencies:
+      jose:
+        specifier: ^5.9.6
+        version: 5.10.0
       maskinporten-wizard:
         specifier: workspace:*
         version: link:../../packages/scopes-catalogue

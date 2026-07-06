@@ -1,7 +1,7 @@
-# maskinporten
+# Maskinporten Tools
 
-> **Norway's Maskinporten, made pleasant for developers.**
-> A TypeScript-first client, a credential-free local mock, and an interactive scope wizard.
+> **Norway's machine gate, made passable.**
+> A TypeScript-first client, a credential-free local mock, and an interactive scope wizard for Maskinporten.
 
 > **Live on Azure (free tier):**
 > - **Wizard:** https://wonderful-water-0f1b97d03.7.azurestaticapps.net
