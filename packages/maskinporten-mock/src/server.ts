@@ -53,8 +53,16 @@ const readBody = (request: IncomingMessage): Promise<string> =>
   });
 
 const getBaseUrl = (request: IncomingMessage, fallbackUrl: string): string => {
-  const host = request.headers.host;
-  return host ? `http://${host}` : fallbackUrl;
+  const rawHost = request.headers['x-forwarded-host'] ?? request.headers.host;
+  const host = Array.isArray(rawHost) ? rawHost[0] : rawHost;
+  if (!host) {
+    return fallbackUrl;
+  }
+  // Honour the proxy protocol so the hosted demo (behind Azure Container Apps'
+  // TLS ingress) advertises https URLs, not the internal http hop.
+  const rawProto = request.headers['x-forwarded-proto'];
+  const proto = (Array.isArray(rawProto) ? rawProto[0] : rawProto) ?? 'http';
+  return `${proto}://${host}`;
 };
 
 export const startMockServer = async (options: MockServerOptions = {}): Promise<MockServer> => {

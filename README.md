@@ -3,7 +3,9 @@
 > **Norway's Maskinporten, made pleasant for developers.**
 > A TypeScript-first client, a credential-free local mock, and an interactive scope wizard.
 
-> **Wizard — live on Azure:** https://wonderful-water-0f1b97d03.7.azurestaticapps.net
+> **Live on Azure (free tier):**
+> - **Wizard:** https://wonderful-water-0f1b97d03.7.azurestaticapps.net
+> - **Mock demo** (token endpoint): https://maskinporten-mock.ambitiousflower-539d08fc.swedencentral.azurecontainerapps.io
 
 [![npm](https://img.shields.io/npm/v/maskinporten.svg)](https://www.npmjs.com/package/maskinporten)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
@@ -62,9 +64,11 @@ Point the client at it and everything works offline — perfect for tests and CI
 
 The **wizard** runs on **Azure Static Web Apps (Free)** — live at
 `https://wonderful-water-0f1b97d03.7.azurestaticapps.net`. The **`maskinporten-mock`
-demo** targets **Azure Container Apps** (consumption, scale-to-zero) from a public GHCR
-image. Infra is Bicep; see **[infra/README.md](./infra/README.md)** for the one-shot
-`az` runbook, the GitHub Actions workflows, and the register-in-advance secrets.
+demo** runs on **Azure Container Apps** (consumption, scale-to-zero) from a public GHCR
+image — live at
+`https://maskinporten-mock.ambitiousflower-539d08fc.swedencentral.azurecontainerapps.io`.
+Infra is Bicep; see **[infra/README.md](./infra/README.md)** for the one-shot `az`
+runbook, the GitHub Actions workflows, and the register-in-advance secrets.
 
 ## Development
 
