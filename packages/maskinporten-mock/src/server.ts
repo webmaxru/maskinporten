@@ -85,6 +85,35 @@ export const startMockServer = async (options: MockServerOptions = {}): Promise<
       const scenarioCandidate = scenarioHeader ?? url.searchParams.get('scenario');
       const scenario = isMockScenario(scenarioCandidate) ? scenarioCandidate : undefined;
 
+      if (request.method === 'GET' && url.pathname === '/health') {
+        json(response, 200, { status: 'ok' });
+        return;
+      }
+
+      if (request.method === 'GET' && url.pathname === '/') {
+        const base = getBaseUrl(request, baseUrl);
+        response.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
+        response.end(
+          `<!doctype html><html lang="en"><head><meta charset="utf-8">` +
+            `<meta name="viewport" content="width=device-width, initial-scale=1">` +
+            `<title>maskinporten-mock</title>` +
+            `<style>body{font-family:system-ui,sans-serif;max-width:44rem;margin:3rem auto;padding:0 1rem;line-height:1.55;background:#0d1117;color:#e6edf3}code{background:#161b22;padding:.1rem .35rem;border-radius:4px}a{color:#58a6ff}</style>` +
+            `</head><body>` +
+            `<h1>maskinporten-mock</h1>` +
+            `<p>A credential-free mock of Norway's Maskinporten token endpoint, for local ` +
+            `development and CI. It is a test double &mdash; it does <strong>not</strong> issue real tokens.</p>` +
+            `<h2>Endpoints</h2><ul>` +
+            `<li><code>GET /.well-known/oauth-authorization-server</code> &mdash; <a href="${base}/.well-known/oauth-authorization-server">discovery</a></li>` +
+            `<li><code>GET /jwks</code> &mdash; <a href="${base}/jwks">signing keys</a></li>` +
+            `<li><code>POST /token</code> &mdash; issue a mock token (<code>grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer</code>)</li>` +
+            `<li><code>GET /authentication/api/v1/exchange/maskinporten</code> &mdash; Altinn token exchange (needs <code>Bearer</code>)</li>` +
+            `<li><code>GET /health</code></li></ul>` +
+            `<p><a href="https://github.com/webmaxru/maskinporten">github.com/webmaxru/maskinporten</a></p>` +
+            `</body></html>`,
+        );
+        return;
+      }
+
       if (request.method === 'GET' && url.pathname === '/.well-known/oauth-authorization-server') {
         const issuer = getBaseUrl(request, baseUrl);
         json(response, 200, {

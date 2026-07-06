@@ -93,4 +93,24 @@ describe('maskinporten-mock', () => {
     expect(body.error).toBe('invalid_request');
     expect(body.error_description).toContain('unsupported claim');
   });
+
+  it('serves a friendly landing page at the root', async () => {
+    server = await startMockServer();
+    const response = await fetch(`${server.url}/`);
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get('content-type')).toContain('text/html');
+    const body = await response.text();
+    expect(body).toContain('maskinporten-mock');
+    expect(body).toContain('/.well-known/oauth-authorization-server');
+  });
+
+  it('exposes a health check', async () => {
+    server = await startMockServer();
+    const response = await fetch(`${server.url}/health`);
+
+    expect(response.status).toBe(200);
+    const body = (await response.json()) as { status: string };
+    expect(body.status).toBe('ok');
+  });
 });
