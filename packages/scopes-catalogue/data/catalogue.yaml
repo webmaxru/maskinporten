@@ -1,0 +1,35 @@
+# maskinporten-scopes catalogue (SEED — expanded by todo: scope-catalogue)
+#
+# Schema (see src/index.ts): version + useCases[].
+# Each use-case maps a real integration goal to the exact scopes, Altinn resource
+# URNs, which authority authorizes them, an ordered registration checklist, and
+# portal links. Seeded from the Wenche reference in the research report.
+
+version: 0
+useCases:
+  - id: file-skattemelding-as
+    title: File the tax return (skattemelding) for an AS
+    audience: system-provider
+    scopes:
+      - skatteetaten:formueinntekt/skattemelding
+      - altinn:instances.read
+      - altinn:instances.write
+    altinnResources:
+      - app_skd_formueinntekt-skattemelding-v2
+    requestFrom:
+      - Skatteetaten
+      - Altinn
+    steps:
+      - Register and accept bruksvilkår in Samarbeidsportalen (Digdir)
+      - Generate a keypair (JWK) or obtain a virksomhetssertifikat
+      - Register a Maskinporten client and request the scopes above
+      - Register your system in the Altinn systemregister with the resource URNs above
+      - Customers approve your system user via confirmUrl (BankID)
+    portals:
+      - https://sjolvbetjening.samarbeid.digdir.no
+      - https://docs.digdir.no/docs/Maskinporten/
+      - https://docs.altinn.studio/authentication/systemauthentication/
+    notes: >-
+      SKD skattemelding needs BOTH a Maskinporten token AND an Altinn-exchanged token.
+      The aksjonaerregisteroppgave scope, by contrast, calls the SKD API directly with
+      no Altinn exchange.

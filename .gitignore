@@ -1,0 +1,18 @@
+node_modules/
+dist/
+coverage/
+*.log
+.DS_Store
+
+# Secrets — NEVER commit private keys or certificates
+.env
+.env.*
+!.env.example
+*.pem
+*.p12
+*.key
+*.jwk
+maskinporten_*.pem
+
+# Build output
+apps/wizard/dist/

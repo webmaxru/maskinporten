@@ -1,0 +1,45 @@
+{
+  "name": "maskinporten-scopes",
+  "version": "0.0.0",
+  "description": "Curated catalogue mapping Norwegian public-sector use-cases to Maskinporten scopes, Altinn resource URNs, and registration steps — with a maskinporten-wizard CLI.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Maxim Salnikov (@webmaxru)",
+  "homepage": "https://github.com/webmaxru/maskinporten",
+  "repository": { "type": "git", "url": "git+https://github.com/webmaxru/maskinporten.git", "directory": "packages/scopes-catalogue" },
+  "keywords": ["maskinporten", "altinn", "scopes", "norway", "digdir", "wizard"],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "maskinporten-wizard": "./dist/cli.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./catalogue.yaml": "./data/catalogue.yaml"
+  },
+  "files": ["dist", "data", "README.md"],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsx watch src/cli.ts",
+    "test": "vitest run --passWithNoTests",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint src"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.7.0",
+    "yaml": "^2.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.5",
+    "tsup": "^8.3.0",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.4"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

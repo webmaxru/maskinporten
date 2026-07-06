@@ -1,0 +1,43 @@
+{
+  "name": "maskinporten",
+  "version": "0.0.0",
+  "description": "TypeScript-first client for Norway's Maskinporten: one-call cached tokens, Altinn token exchange, and systembruker support.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Maxim Salnikov (@webmaxru)",
+  "homepage": "https://github.com/webmaxru/maskinporten",
+  "repository": { "type": "git", "url": "git+https://github.com/webmaxru/maskinporten.git", "directory": "packages/maskinporten" },
+  "keywords": ["maskinporten", "altinn", "norway", "digdir", "oauth2", "jwt", "systembruker", "token", "samarbeidsportalen"],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": ["dist", "README.md"],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run --passWithNoTests",
+    "test:watch": "vitest",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint src"
+  },
+  "dependencies": {
+    "jose": "^5.9.6"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.5",
+    "maskinporten-mock": "workspace:*",
+    "tsup": "^8.3.0",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.4"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

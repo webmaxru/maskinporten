@@ -1,0 +1,44 @@
+{
+  "name": "maskinporten-mock",
+  "version": "0.0.0",
+  "description": "Credential-free local mock of Norway's Maskinporten token endpoint (+ JWKS, Altinn exchange, error scenarios). Docker + npx.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Maxim Salnikov (@webmaxru)",
+  "homepage": "https://github.com/webmaxru/maskinporten",
+  "repository": { "type": "git", "url": "git+https://github.com/webmaxru/maskinporten.git", "directory": "packages/maskinporten-mock" },
+  "keywords": ["maskinporten", "mock", "testing", "oauth2", "altinn", "norway", "ci"],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "maskinporten-mock": "./dist/cli.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist", "README.md"],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsx watch src/cli.ts",
+    "start": "node dist/cli.js",
+    "test": "vitest run --passWithNoTests",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint src"
+  },
+  "dependencies": {
+    "jose": "^5.9.6"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.5",
+    "tsup": "^8.3.0",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.4"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
