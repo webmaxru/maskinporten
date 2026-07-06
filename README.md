@@ -4,7 +4,7 @@
 > A TypeScript-first client, a credential-free local mock, and an interactive scope wizard for Maskinporten.
 
 > **Live on Azure (free tier):**
-> - **Wizard:** https://wonderful-water-0f1b97d03.7.azurestaticapps.net
+> - **Site &amp; wizard:** https://maskinporten.isainative.dev
 > - **Mock demo** (token endpoint): https://maskinporten-mock.ambitiousflower-539d08fc.swedencentral.azurecontainerapps.io
 
 [![npm](https://img.shields.io/npm/v/maskinporten.svg)](https://www.npmjs.com/package/maskinporten)
