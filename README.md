@@ -3,6 +3,8 @@
 > **Norway's Maskinporten, made pleasant for developers.**
 > A TypeScript-first client, a credential-free local mock, and an interactive scope wizard.
 
+> **Wizard — live on Azure:** https://wonderful-water-0f1b97d03.7.azurestaticapps.net
+
 [![npm](https://img.shields.io/npm/v/maskinporten.svg)](https://www.npmjs.com/package/maskinporten)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
@@ -55,6 +57,14 @@ Point the client at it and everything works offline — perfect for tests and CI
   JWK or a virksomhetssertifikat), a registered client, and pre-allocated scopes.
   **See [docs/prerequisites.md](./docs/prerequisites.md)** for the full checklist, and run the
   wizard (`npx maskinporten-wizard`) to find the exact scopes for your use-case.
+
+## Deploy (Azure, free tier)
+
+The **wizard** runs on **Azure Static Web Apps (Free)** — live at
+`https://wonderful-water-0f1b97d03.7.azurestaticapps.net`. The **`maskinporten-mock`
+demo** targets **Azure Container Apps** (consumption, scale-to-zero) from a public GHCR
+image. Infra is Bicep; see **[infra/README.md](./infra/README.md)** for the one-shot
+`az` runbook, the GitHub Actions workflows, and the register-in-advance secrets.
 
 ## Development
 
