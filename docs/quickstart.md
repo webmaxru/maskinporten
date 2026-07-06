@@ -68,6 +68,12 @@ const client = createMaskinportenClient({
 const token = await client.getToken();
 ```
 
+Not sure it's wired correctly? Let the CLI attempt a real token request and decode any failure:
+
+```bash
+maskinporten-wizard doctor    # uses the MASKINPORTEN_* env vars above (or --flags)
+```
+
 ## Altinn exchange
 
 Altinn APIs often need a second exchange from a Maskinporten token to an Altinn token:

@@ -21,7 +21,7 @@ This monorepo fixes that:
 |---|---|
 | [`maskinporten`](./packages/maskinporten) | The client. One call → a cached, auto-renewing token. Altinn exchange + `systembruker` built in. |
 | [`maskinporten-mock`](./packages/maskinporten-mock) | A local mock of the token endpoint. **Develop and CI-test with zero credentials.** `docker run` or `npx`. |
-| [`maskinporten-wizard`](./packages/scopes-catalogue) | A curated "which scopes / resource URNs do I need?" catalogue + the `maskinporten-wizard` CLI. |
+| [`maskinporten-wizard`](./packages/scopes-catalogue) | Scope catalogue **+ a CLI that does what a web page can't**: `init` (keypair + `.env` + client snippet) and `doctor` (real token request + failure decoder). |
 | [`apps/wizard`](./apps/wizard) | The same wizard as a web page (GitHub Pages). |
 
 ## Quick start
@@ -60,6 +60,26 @@ Point the client at it and everything works offline — perfect for tests and CI
   **See [docs/prerequisites.md](./docs/prerequisites.md)** for the full checklist, and run the
   wizard to find the exact scopes for your use-case — `pnpm wizard` in this monorepo, or
   `npx maskinporten-wizard` once it's published to npm.
+
+### Wizard CLI — scaffold & diagnose
+
+The **web wizard** is for browsing "which scopes do I need?". The **CLI** does what a static
+page can't (local keys + real network calls):
+
+- `init` — generate an RS256 keypair, a `.env`, and a ready-to-run client snippet.
+- `doctor` — attempt a **real** token request (against Maskinporten *or* a local
+  `maskinporten-mock`) and **decode the failure** — the opaque `AUTH-00004`, wrong `aud`,
+  ungranted scope, unapproved systembruker, etc.
+
+```bash
+# From this monorepo (before npm publish):
+pnpm --filter maskinporten-wizard build
+node packages/scopes-catalogue/dist/cli.js init --use-case read-folkeregisteret
+node packages/scopes-catalogue/dist/cli.js doctor      # reads MASKINPORTEN_* env or flags
+
+# Once published to npm:
+npx maskinporten-wizard doctor
+```
 
 ## Deploy (Azure, free tier)
 

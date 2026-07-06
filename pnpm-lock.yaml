@@ -92,6 +92,12 @@ importers:
       '@clack/prompts':
         specifier: ^0.7.0
         version: 0.7.0
+      jose:
+        specifier: ^5.9.6
+        version: 5.10.0
+      maskinporten:
+        specifier: workspace:*
+        version: link:../maskinporten
       yaml:
         specifier: ^2.6.0
         version: 2.9.0
@@ -99,6 +105,9 @@ importers:
       '@types/node':
         specifier: ^22.7.5
         version: 22.20.0
+      maskinporten-mock:
+        specifier: workspace:*
+        version: link:../maskinporten-mock
       tsup:
         specifier: ^8.3.0
         version: 8.5.1(postcss@8.5.16)(tsx@4.23.0)(typescript@5.9.3)(yaml@2.9.0)

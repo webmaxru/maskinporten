@@ -2,14 +2,18 @@
 
 Curated catalogue mapping Norwegian public-sector use-cases to Maskinporten scopes, Altinn resource URNs, portal links, and registration steps. It powers the `maskinporten-wizard` CLI and the wizard web app.
 
-## Install or run
+## Commands
+
+- `maskinporten-wizard` — interactive scope lookup (also `--id <id> --json`).
+- `maskinporten-wizard init [--use-case <id>]` — generate a keypair, `.env`, and a client snippet.
+- `maskinporten-wizard doctor` — attempt a real token request and decode the failure.
 
 ```bash
-npm i maskinporten-wizard    # once published to npm
-npx maskinporten-wizard      # once published to npm
+npx maskinporten-wizard doctor      # once published to npm
 
 # From this monorepo, before it is published:
-pnpm wizard
+pnpm --filter maskinporten-wizard build
+node dist/cli.js doctor
 ```
 
 ## Minimal usage

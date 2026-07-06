@@ -35,10 +35,13 @@
   },
   "dependencies": {
     "@clack/prompts": "^0.7.0",
+    "jose": "^5.9.6",
+    "maskinporten": "workspace:*",
     "yaml": "^2.6.0"
   },
   "devDependencies": {
     "@types/node": "^22.7.5",
+    "maskinporten-mock": "workspace:*",
     "tsup": "^8.3.0",
     "tsx": "^4.19.1",
     "typescript": "^5.6.3",
