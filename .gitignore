@@ -16,3 +16,7 @@ maskinporten_*.pem
 
 # Build output
 apps/wizard/dist/
+
+
+# APM dependencies
+apm_modules/
