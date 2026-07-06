@@ -8,6 +8,7 @@ import { MockOAuthError, validateAssertion } from './validate';
 
 export interface MockServerOptions {
   port?: number;
+  host?: string;
   acceptedScopes?: string[];
   acceptedClientIds?: string[];
 }
@@ -160,7 +161,7 @@ export const startMockServer = async (options: MockServerOptions = {}): Promise<
   });
 
   await new Promise<void>((resolve) => {
-    server.listen(options.port ?? 0, '127.0.0.1', resolve);
+    server.listen(options.port ?? 0, options.host ?? '127.0.0.1', resolve);
   });
 
   const address = server.address() as AddressInfo;
