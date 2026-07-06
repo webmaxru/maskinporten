@@ -1,0 +1,22 @@
+# Maskinporten Tools
+
+> Open-source developer toolkit for Norway's Maskinporten — the OAuth2 machine-to-machine gate in front of ~50 public-sector APIs. A TypeScript client, a credential-free local mock, and a scope wizard.
+
+Maskinporten Tools removes the friction of getting a Maskinporten token: one call for a cached token (with Altinn token exchange and systembruker), a local mock so you build and CI-test with zero credentials, and a wizard that maps an integration goal to the exact scopes and Altinn resource URNs you need. MIT-licensed. Built by Maxim Salnikov.
+
+## Site
+- [Maskinporten Tools](https://maskinporten.isainative.dev/): the site, the scope wizard, and a live mock playground that issues a token in your browser.
+
+## Source & packages
+- [GitHub repository](https://github.com/webmaxru/maskinporten): source, issues, and documentation.
+- [maskinporten (npm)](https://www.npmjs.com/package/maskinporten): the TypeScript client — cached tokens, Altinn exchange, systembruker.
+- [maskinporten-mock](https://github.com/webmaxru/maskinporten/blob/main/packages/maskinporten-mock/README.md): a credential-free mock of the Maskinporten token endpoint.
+- [maskinporten-wizard](https://github.com/webmaxru/maskinporten/blob/main/packages/scopes-catalogue/README.md): scope catalogue plus a CLI (`init`, `doctor`).
+
+## Documentation
+- [Quickstart](https://github.com/webmaxru/maskinporten/blob/main/docs/quickstart.md): install and first token.
+- [Register in advance](https://github.com/webmaxru/maskinporten/blob/main/docs/prerequisites.md): what to obtain before calling real Maskinporten.
+
+## References
+- [Digdir — Maskinporten documentation](https://docs.digdir.no/docs/Maskinporten/): the official specification.
+- [Altinn authentication documentation](https://docs.altinn.studio/): systembruker and token exchange.

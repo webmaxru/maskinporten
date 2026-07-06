@@ -1,0 +1,107 @@
+<!doctype html>
+<!-- Source for og-image.png (1200x630). Render with headless Chrome:
+     chrome --headless --window-size=1200,630 --force-device-scale-factor=1
+       --screenshot=public/og-image.png scripts/og-source.html -->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Mono:wght@500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+      }
+      .card {
+        width: 1200px;
+        height: 630px;
+        background: #0a1020;
+        background-image: radial-gradient(120% 70% at 78% -10%, #16233f 0, rgba(10, 16, 32, 0) 60%);
+        color: #eaf0f8;
+        padding: 80px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        font-family: 'Space Grotesk', system-ui, sans-serif;
+        position: relative;
+        overflow: hidden;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        font-size: 30px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+      }
+      .brand svg {
+        width: 40px;
+        height: 48px;
+      }
+      .headline {
+        font-size: 92px;
+        font-weight: 700;
+        line-height: 0.98;
+        letter-spacing: -0.03em;
+        max-width: 15ch;
+      }
+      .headline .thin {
+        color: #8ea0bd;
+        font-weight: 500;
+      }
+      .sub {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 26px;
+        color: #c8a24b;
+        letter-spacing: 0.02em;
+      }
+      .foot {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 24px;
+        color: #94a2bb;
+        border-top: 1px solid rgba(200, 162, 75, 0.28);
+        padding-top: 26px;
+      }
+      .foot .url {
+        color: #e7c56a;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div class="brand">
+        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M18 51 L18 29 Q18 15 32 15 Q46 15 46 29 L46 51"
+            fill="none"
+            stroke="#c8a24b"
+            stroke-width="5"
+            stroke-linecap="round"
+          />
+          <path d="M24 44 H40" stroke="#c8a24b" stroke-width="4" stroke-linecap="round" />
+        </svg>
+        Maskinporten Tools
+      </div>
+      <div>
+        <div class="headline">The machine gate,<br /><span class="thin">made passable.</span></div>
+        <div class="sub" style="margin-top: 26px">
+          TypeScript client · credential-free mock · scope wizard
+        </div>
+      </div>
+      <div class="foot">
+        <span class="url">maskinporten.isainative.dev</span>
+        <span>Norway · Maskinporten · MIT</span>
+      </div>
+    </div>
+  </body>
+</html>

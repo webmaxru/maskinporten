@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Maskinporten Tools">
+  <rect width="64" height="64" rx="14" fill="#0a1020" />
+  <path
+    d="M18 51 L18 29 Q18 15 32 15 Q46 15 46 29 L46 51"
+    fill="none"
+    stroke="#c8a24b"
+    stroke-width="5"
+    stroke-linecap="round"
+  />
+  <path d="M24 44 H40" fill="none" stroke="#c8a24b" stroke-width="4" stroke-linecap="round" />
+</svg>
