@@ -15,6 +15,7 @@
     "test": "pnpm -r test",
     "typecheck": "pnpm -r typecheck",
     "lint": "eslint .",
+    "wizard": "pnpm --filter maskinporten-wizard build && pnpm --filter maskinporten-wizard start",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "changeset": "changeset",

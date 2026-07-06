@@ -1,18 +1,21 @@
-# maskinporten-scopes
+# maskinporten-wizard
 
 Curated catalogue mapping Norwegian public-sector use-cases to Maskinporten scopes, Altinn resource URNs, portal links, and registration steps. It powers the `maskinporten-wizard` CLI and the wizard web app.
 
 ## Install or run
 
 ```bash
-npm i maskinporten-scopes
-npx maskinporten-wizard
+npm i maskinporten-wizard    # once published to npm
+npx maskinporten-wizard      # once published to npm
+
+# From this monorepo, before it is published:
+pnpm wizard
 ```
 
 ## Minimal usage
 
 ```ts
-import { getCatalogue } from 'maskinporten-scopes';
+import { getCatalogue } from 'maskinporten-wizard';
 
 for (const useCase of getCatalogue().useCases) {
   console.log(useCase.name, useCase.scopes);

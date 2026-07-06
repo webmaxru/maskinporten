@@ -10,4 +10,4 @@ Package READMEs:
 
 - [`maskinporten`](../packages/maskinporten/README.md) — TypeScript client.
 - [`maskinporten-mock`](../packages/maskinporten-mock/README.md) — local token endpoint mock.
-- [`maskinporten-scopes`](../packages/scopes-catalogue/README.md) — scope catalogue and `maskinporten-wizard` CLI.
+- [`maskinporten-wizard`](../packages/scopes-catalogue/README.md) — scope catalogue and `maskinporten-wizard` CLI.

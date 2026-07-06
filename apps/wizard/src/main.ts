@@ -1,4 +1,4 @@
-import { findUseCase, getCatalogue, type UseCase } from 'maskinporten-scopes';
+import { findUseCase, getCatalogue, type UseCase } from 'maskinporten-wizard';
 
 const catalogue = getCatalogue();
 const app = globalThis.document.querySelector<HTMLDivElement>('#app');

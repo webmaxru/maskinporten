@@ -43,7 +43,7 @@ az deployment group create -g "$RG" \
   --parameters mockImage=ghcr.io/webmaxru/maskinporten-mock:latest
 
 # 2) Deploy the built wizard to Static Web Apps
-pnpm --filter maskinporten-scopes build
+pnpm --filter maskinporten-wizard build
 pnpm --filter @wizard/site build
 SWA=$(az deployment group show -g "$RG" -n main --query properties.outputs.staticWebAppName.value -o tsv)
 TOKEN=$(az staticwebapp secrets list -n "$SWA" --query properties.apiKey -o tsv)

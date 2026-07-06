@@ -21,7 +21,7 @@ This monorepo fixes that:
 |---|---|
 | [`maskinporten`](./packages/maskinporten) | The client. One call → a cached, auto-renewing token. Altinn exchange + `systembruker` built in. |
 | [`maskinporten-mock`](./packages/maskinporten-mock) | A local mock of the token endpoint. **Develop and CI-test with zero credentials.** `docker run` or `npx`. |
-| [`maskinporten-scopes`](./packages/scopes-catalogue) | A curated "which scopes / resource URNs do I need?" catalogue + the `maskinporten-wizard` CLI. |
+| [`maskinporten-wizard`](./packages/scopes-catalogue) | A curated "which scopes / resource URNs do I need?" catalogue + the `maskinporten-wizard` CLI. |
 | [`apps/wizard`](./apps/wizard) | The same wizard as a web page (GitHub Pages). |
 
 ## Quick start
@@ -58,7 +58,8 @@ Point the client at it and everything works offline — perfect for tests and CI
 - **To call real Maskinporten:** yes — a Norwegian org number, a signing key (self-generated
   JWK or a virksomhetssertifikat), a registered client, and pre-allocated scopes.
   **See [docs/prerequisites.md](./docs/prerequisites.md)** for the full checklist, and run the
-  wizard (`npx maskinporten-wizard`) to find the exact scopes for your use-case.
+  wizard to find the exact scopes for your use-case — `pnpm wizard` in this monorepo, or
+  `npx maskinporten-wizard` once it's published to npm.
 
 ## Deploy (Azure, free tier)
 
@@ -78,6 +79,7 @@ pnpm -r build
 pnpm -r typecheck
 pnpm -r test        # runs against maskinporten-mock — no secrets needed
 pnpm lint
+pnpm wizard         # run the scope-wizard CLI locally (no npm publish needed)
 ```
 
 MIT © Maxim Salnikov ([@webmaxru](https://github.com/webmaxru))

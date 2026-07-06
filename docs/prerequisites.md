@@ -18,7 +18,7 @@ Maintainers need release and hosting credentials for npm, GHCR, and the wizard s
 
 | Setup / secret | Purpose | Preferred setup | Notes |
 |---|---|---|---|
-| npm Trusted Publishing | Publish `maskinporten`, `maskinporten-mock`, and `maskinporten-scopes` with provenance | Configure npm OIDC Trusted Publishing for the GitHub Actions release workflow | Preferred: no long-lived npm token stored in GitHub. |
+| npm Trusted Publishing | Publish `maskinporten`, `maskinporten-mock`, and `maskinporten-wizard` with provenance | Configure npm OIDC Trusted Publishing for the GitHub Actions release workflow | Preferred: no long-lived npm token stored in GitHub. |
 | `NPM_TOKEN` | Fallback npm publishing | GitHub Actions repository secret | Use only if Trusted Publishing is not available for the package. Use an automation token with the smallest useful scope. |
 | Built-in `GITHUB_TOKEN` | Push the `maskinporten-mock` image to GHCR and deploy GitHub Pages | Workflow permissions: `packages: write` for GHCR; Pages permissions for the wizard | No manual secret to create. The repository/package may still need Actions access enabled in GitHub settings. |
 | Cloudflare DNS token (optional) | Custom domain for the wizard | GitHub Actions secret, only for a vanity domain | GitHub Pages works without this. Use only if the project wants a custom wizard domain. |

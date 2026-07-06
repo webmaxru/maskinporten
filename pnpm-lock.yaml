@@ -32,7 +32,7 @@ importers:
 
   apps/wizard:
     dependencies:
-      maskinporten-scopes:
+      maskinporten-wizard:
         specifier: workspace:*
         version: link:../../packages/scopes-catalogue
     devDependencies:

@@ -1,5 +1,5 @@
 {
-  "name": "maskinporten-scopes",
+  "name": "maskinporten-wizard",
   "version": "0.0.0",
   "description": "Curated catalogue mapping Norwegian public-sector use-cases to Maskinporten scopes, Altinn resource URNs, and registration steps — with a maskinporten-wizard CLI.",
   "type": "module",
@@ -25,6 +25,7 @@
     "gen": "tsx scripts/generate.ts",
     "prebuild": "pnpm run gen",
     "build": "tsup",
+    "start": "node dist/cli.js",
     "dev": "tsx watch src/cli.ts",
     "pretest": "pnpm run gen",
     "test": "vitest run --passWithNoTests",

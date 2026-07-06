@@ -7,7 +7,7 @@ before posting.** Nothing here has been published.
 - Repo: https://github.com/webmaxru/maskinporten (MIT, public)
 - Wizard (live): https://wonderful-water-0f1b97d03.7.azurestaticapps.net
 - Mock demo (live): https://maskinporten-mock.ambitiousflower-539d08fc.swedencentral.azurecontainerapps.io
-- 4 packages: `maskinporten` (client), `maskinporten-mock`, `maskinporten-scopes` (+ `maskinporten-wizard` CLI), the web wizard.
+- 4 packages: `maskinporten` (client), `maskinporten-mock`, `maskinporten-wizard` (scope catalogue + CLI), the web wizard.
 - 22 tests green; mock-first (build & CI with **zero** Norwegian credentials).
 
 **The story (Problem → Solution → Impact → Hook):**

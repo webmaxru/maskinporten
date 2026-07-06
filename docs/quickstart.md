@@ -46,7 +46,8 @@ Real Maskinporten needs a Norwegian organisasjonsnummer, Samarbeidsportalen acce
 - Run the wizard to find the likely scopes and Altinn resource URNs:
 
 ```bash
-npx maskinporten-wizard
+pnpm wizard                 # from this monorepo (before npm publish)
+npx maskinporten-wizard     # once published to npm
 ```
 
 Then configure the client from environment variables or your secret store:
