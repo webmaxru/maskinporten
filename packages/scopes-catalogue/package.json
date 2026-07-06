@@ -22,9 +22,13 @@
   },
   "files": ["dist", "data", "README.md"],
   "scripts": {
+    "gen": "tsx scripts/generate.ts",
+    "prebuild": "pnpm run gen",
     "build": "tsup",
     "dev": "tsx watch src/cli.ts",
+    "pretest": "pnpm run gen",
     "test": "vitest run --passWithNoTests",
+    "pretypecheck": "pnpm run gen",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint src"
   },

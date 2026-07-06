@@ -10,6 +10,8 @@ export default tseslint.config(
       '**/*.config.*',
       'apps/wizard/dist/**',
       'coverage/**',
+      'examples/**',
+      '**/*.generated.ts',
     ],
   },
   js.configs.recommended,

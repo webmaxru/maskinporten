@@ -1,0 +1,172 @@
+import type { Catalogue } from './index';
+
+export const catalogue: Catalogue = {
+  "version": 1,
+  "useCases": [
+    {
+      "id": "file-arsregnskap",
+      "title": "File annual accounts (årsregnskap) to Brønnøysund",
+      "audience": "system-provider",
+      "scopes": [
+        "brreg:arsregnskap",
+        "altinn:instances.read",
+        "altinn:instances.write"
+      ],
+      "altinnResources": [
+        "urn:altinn:resource:brreg-arsregnskap"
+      ],
+      "requestFrom": [
+        "Brønnøysundregistrene",
+        "Altinn",
+        "Digdir Samarbeidsportalen"
+      ],
+      "steps": [
+        "Create or reuse a Maskinporten client in Samarbeidsportalen and register the signing key.",
+        "Request the Brønnøysund annual-accounts scope from Brønnøysundregistrene.",
+        "Request Altinn instance read/write scopes for the same client.",
+        "Register the system in Altinn systemregister with the annual-accounts resource.",
+        "Ask each customer to approve the system user before submitting årsregnskap."
+      ],
+      "portals": [
+        "https://sjolvbetjening.samarbeid.digdir.no",
+        "https://www.brreg.no/regnskap/",
+        "https://docs.altinn.studio/authentication/systemauthentication/"
+      ],
+      "notes": "The exact BRG årsregnskap scope and Altinn resource identifier should be verified with Brønnøysundregistrene and docs.digdir.no before production use."
+    },
+    {
+      "id": "file-skattemelding-as",
+      "title": "File the tax return (skattemelding) for an AS",
+      "audience": "system-provider",
+      "scopes": [
+        "skatteetaten:formueinntekt/skattemelding",
+        "altinn:instances.read",
+        "altinn:instances.write"
+      ],
+      "altinnResources": [
+        "app_skd_formueinntekt-skattemelding-v2"
+      ],
+      "requestFrom": [
+        "Skatteetaten",
+        "Altinn",
+        "Digdir Samarbeidsportalen"
+      ],
+      "steps": [
+        "Register and accept bruksvilkår in Samarbeidsportalen (Digdir).",
+        "Generate a keypair (JWK) or obtain a virksomhetssertifikat.",
+        "Register a Maskinporten client and request the Skatteetaten scope.",
+        "For own-company filing, grant the client access for your own organisation.",
+        "For system-provider filing, register your system in Altinn systemregister with the resource URNs above.",
+        "Customers approve your system user via confirmUrl (BankID)."
+      ],
+      "portals": [
+        "https://sjolvbetjening.samarbeid.digdir.no",
+        "https://docs.digdir.no/docs/Maskinporten/",
+        "https://docs.altinn.studio/authentication/systemauthentication/",
+        "https://www.skatteetaten.no/bedrift-og-organisasjon/skatt/skattemelding/"
+      ],
+      "notes": "Skattemelding can be used for own-company integrations or by system providers. System providers normally need Altinn systembruker/resource rights in addition to the Skatteetaten Maskinporten scope."
+    },
+    {
+      "id": "read-folkeregisteret",
+      "title": "Look up persons in Folkeregisteret",
+      "audience": "public-or-authorized-private-sector",
+      "scopes": [
+        "folkeregister:deling/offentligmedhjemmel"
+      ],
+      "requestFrom": [
+        "Skatteetaten Folkeregisteret",
+        "Digdir Samarbeidsportalen"
+      ],
+      "steps": [
+        "Confirm that your organisation has a legal basis for Folkeregisteret access.",
+        "Apply for access with Skatteetaten and specify the data packages you need.",
+        "Register a Maskinporten client and signing key in Samarbeidsportalen.",
+        "Request the Folkeregisteret scope authorized by Skatteetaten.",
+        "Test against Tenor/synthetic persons before using production data."
+      ],
+      "portals": [
+        "https://sjolvbetjening.samarbeid.digdir.no",
+        "https://www.skatteetaten.no/deling/folkeregisteret/",
+        "https://docs.digdir.no/docs/Maskinporten/"
+      ],
+      "notes": "Folkeregisteret access depends on legal basis and approved data packages. Verify the exact scope value and whether your integration needs broader or narrower scopes before production registration."
+    },
+    {
+      "id": "read-elhub-metering",
+      "title": "Read metering-point data from Elhub",
+      "audience": "energy-market-actor",
+      "scopes": [
+        "elhub:meteringpoints.read",
+        "elhub:meteringvalues.read"
+      ],
+      "requestFrom": [
+        "Elhub",
+        "Digdir Samarbeidsportalen"
+      ],
+      "steps": [
+        "Confirm that the organisation is an approved market actor or has delegated rights.",
+        "Register the Maskinporten client and signing key in Samarbeidsportalen.",
+        "Request Elhub scopes for metering points and metering values.",
+        "Configure the Elhub API/client relationship in Elhub's actor portal.",
+        "Validate against Elhub's test environment before production rollout."
+      ],
+      "portals": [
+        "https://sjolvbetjening.samarbeid.digdir.no",
+        "https://elhub.no/",
+        "https://dok.elhub.no/"
+      ],
+      "notes": "Elhub scope names and actor-portal setup are API-owner controlled; verify exact scope strings and required market roles with Elhub documentation."
+    },
+    {
+      "id": "read-krr",
+      "title": "Read citizen contact information from KRR",
+      "audience": "public-sector",
+      "scopes": [
+        "krr:global/kontaktinformasjon.read"
+      ],
+      "requestFrom": [
+        "Digdir/Kontakt- og reservasjonsregisteret",
+        "Digdir Samarbeidsportalen"
+      ],
+      "steps": [
+        "Confirm that the organisation may use KRR contact information for the service.",
+        "Register a Maskinporten client and signing key in Samarbeidsportalen.",
+        "Request the KRR contact-information read scope from Digdir.",
+        "Configure environment-specific client access for test and production.",
+        "Use the API only for approved lookup purposes and respect reservation status."
+      ],
+      "portals": [
+        "https://sjolvbetjening.samarbeid.digdir.no",
+        "https://samarbeid.digdir.no/kontaktregisteret/kontakt-og-reservasjonsregisteret/120",
+        "https://docs.digdir.no/docs/Maskinporten/"
+      ],
+      "notes": "The exact KRR scope value is a catalogue seed and should be checked against current Digdir KRR API documentation before production use."
+    },
+    {
+      "id": "submit-aksjonaerregisteroppgave",
+      "title": "File the shareholder register statement (aksjonærregisteroppgave)",
+      "audience": "own-company-or-system-provider",
+      "scopes": [
+        "skatteetaten:aksjonaerregisteroppgave"
+      ],
+      "requestFrom": [
+        "Skatteetaten",
+        "Digdir Samarbeidsportalen"
+      ],
+      "steps": [
+        "Register and accept bruksvilkår in Samarbeidsportalen (Digdir).",
+        "Register a Maskinporten client and signing key.",
+        "Request the Skatteetaten aksjonærregisteroppgave scope for the client.",
+        "If acting for customers, ensure the customer relationship is approved by Skatteetaten's process.",
+        "Submit directly to the Skatteetaten API with the Maskinporten token; do not perform Altinn token exchange."
+      ],
+      "portals": [
+        "https://sjolvbetjening.samarbeid.digdir.no",
+        "https://www.skatteetaten.no/bedrift-og-organisasjon/rapportering-og-bransjer/aksjonaerregisteroppgaven/",
+        "https://docs.digdir.no/docs/Maskinporten/"
+      ],
+      "notes": "This is an SKD direct integration, unlike Altinn-backed form flows. Verify the exact scope string and any customer-representation requirements with Skatteetaten before production use."
+    }
+  ]
+};
