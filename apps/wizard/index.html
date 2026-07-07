@@ -153,20 +153,22 @@ live mock — generated and signed in your browser, no credentials.
 
       <!-- WHY -->
       <section class="section" id="why">
-        <div class="container section-head">
-          <p class="eyebrow">Why</p>
-          <h2 class="section-title">Getting a token shouldn't be a rite of passage</h2>
-          <p class="section-lede">
-            To call a Maskinporten-protected API you build a JWT grant with exactly the right claims,
-            sign it, and exchange it — and for Altinn, exchange it again. Java and .NET have libraries
-            for this. Node/TypeScript didn't, so every team hand-rolls the same glue — and testing it
-            means real organisation credentials against a test environment.
-          </p>
-          <p class="section-lede" style="margin-top: 1rem">
-            Maskinporten Tools removes that: one call for a cached token, a local mock so you build
-            and CI-test with <strong>zero credentials</strong>, and a wizard that tells you which
-            scopes and Altinn resources your use-case needs.
-          </p>
+        <div class="container">
+          <div class="section-head">
+            <p class="eyebrow">Why</p>
+            <h2 class="section-title">Getting a token shouldn't be a rite of passage</h2>
+            <p class="section-lede">
+              To call a Maskinporten-protected API you build a JWT grant with exactly the right claims,
+              sign it, and exchange it — and for Altinn, exchange it again. Java and .NET have libraries
+              for this. Node/TypeScript didn't, so every team hand-rolls the same glue — and testing it
+              means real organisation credentials against a test environment.
+            </p>
+            <p class="section-lede" style="margin-top: 1rem">
+              Maskinporten Tools removes that: one call for a cached token, a local mock so you build
+              and CI-test with <strong>zero credentials</strong>, and a wizard that tells you which
+              scopes and Altinn resources your use-case needs.
+            </p>
+          </div>
         </div>
       </section>
 
