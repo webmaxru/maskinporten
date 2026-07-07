@@ -1,6 +1,6 @@
 {
   "name": "maskinporten-wizard",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Curated catalogue mapping Norwegian public-sector use-cases to Maskinporten scopes, Altinn resource URNs, and registration steps — with a maskinporten-wizard CLI.",
   "type": "module",
   "license": "MIT",

@@ -1,6 +1,6 @@
 {
   "name": "maskinporten",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "TypeScript-first client for Norway's Maskinporten: one-call cached tokens, Altinn token exchange, and systembruker support.",
   "type": "module",
   "license": "MIT",

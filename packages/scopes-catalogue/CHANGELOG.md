@@ -1,5 +1,13 @@
 # maskinporten-wizard
 
+## 0.1.1
+
+### Patch Changes
+
+- Release pipeline now publishes via npm OIDC trusted publishing (tokenless, with automatic provenance); documented the release flow in the README.
+- Updated dependencies
+  - maskinporten@0.1.1
+
 ## 0.1.0
 
 ### Minor Changes

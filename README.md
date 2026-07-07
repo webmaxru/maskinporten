@@ -102,4 +102,41 @@ pnpm lint
 pnpm wizard         # run the scope-wizard CLI locally (no npm publish needed)
 ```
 
+## Releasing to npm
+
+Releases are automated with [Changesets](https://github.com/changesets/changesets) and published
+via **npm [trusted publishing](https://docs.npmjs.com/trusted-publishers) (OIDC)** — **no `NPM_TOKEN`
+is stored anywhere.** The [`release.yml`](./.github/workflows/release.yml) workflow authenticates
+with a short-lived, workflow-scoped OIDC identity (`id-token: write`), and npm generates
+[provenance](https://docs.npmjs.com/generating-provenance-statements) automatically.
+
+**Cut a release:**
+
+```bash
+pnpm changeset                       # pick packages, choose the semver bump, write a summary
+git commit -am "…" && git push       # push the changeset to main
+```
+
+On push, the workflow opens (or updates) a **"Version Packages"** PR that applies the version bumps
+and changelogs. **Merge that PR** and the workflow publishes the changed packages to npm over OIDC.
+
+**Requirements (already configured):**
+
+- Each published package has a **Trusted Publisher** on npmjs.com → _Package → Settings → Trusted
+  Publisher → GitHub Actions_ (owner `webmaxru`, repo `maskinporten`, workflow `release.yml`, empty
+  environment).
+- The workflow runs **npm ≥ 11.5.1** (required for OIDC) and sets `id-token: write`; it deliberately
+  passes **no** `NODE_AUTH_TOKEN` (npm prefers a token over OIDC when both are present).
+
+**Bootstrapping a brand-new package:** a Trusted Publisher can only be configured on a package that
+already exists, so the **first** publish of a new package name must be done once with a normal
+credential — e.g. locally with your 2FA:
+
+```bash
+pnpm -r build
+pnpm -r publish --access public --otp <code>   # or a short-lived, then-revoked token
+```
+
+After that first publish, add the Trusted Publisher (above) and every subsequent release is tokenless.
+
 MIT © Maxim Salnikov ([@webmaxru](https://github.com/webmaxru))
