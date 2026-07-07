@@ -4,6 +4,7 @@
 > A TypeScript-first client, a credential-free local mock, and an interactive scope wizard for Maskinporten.
 
 > **Live on Azure (free tier):**
+>
 > - **Site &amp; wizard:** https://maskinporten.isainative.dev
 > - **Mock demo** (token endpoint): https://maskinporten-mock.ambitiousflower-539d08fc.swedencentral.azurecontainerapps.io
 
@@ -13,16 +14,16 @@
 Maskinporten is the OAuth2 machine-to-machine backbone for ~50 Norwegian public-sector
 APIs (Folkeregisteret, Skatteetaten, Altinn, KRR, Elhub…). Getting a token is a rite of
 passage: build a JWT grant with exactly the right claims, sign it, exchange it, and — for
-Altinn — exchange it *again*. Java and .NET have good libraries. **Node/TypeScript did not.**
+Altinn — exchange it _again_. Java and .NET have good libraries. **Node/TypeScript did not.**
 
 This monorepo fixes that:
 
-| Package | What it is |
-|---|---|
-| [`maskinporten`](./packages/maskinporten) | The client. One call → a cached, auto-renewing token. Altinn exchange + `systembruker` built in. |
-| [`maskinporten-mock`](./packages/maskinporten-mock) | A local mock of the token endpoint. **Develop and CI-test with zero credentials.** `docker run` or `npx`. |
+| Package                                              | What it is                                                                                                                                                   |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [`maskinporten`](./packages/maskinporten)            | The client. One call → a cached, auto-renewing token. Altinn exchange + `systembruker` built in.                                                             |
+| [`maskinporten-mock`](./packages/maskinporten-mock)  | A local mock of the token endpoint. **Develop and CI-test with zero credentials.** `docker run` or `npx`.                                                    |
 | [`maskinporten-wizard`](./packages/scopes-catalogue) | Scope catalogue **+ a CLI that does what a web page can't**: `init` (keypair + `.env` + client snippet) and `doctor` (real token request + failure decoder). |
-| [`apps/wizard`](./apps/wizard) | The same wizard as a web page (GitHub Pages). |
+| [`apps/wizard`](./apps/wizard)                       | The same wizard as a web app, [live on Azure Static Web Apps](https://maskinporten.isainative.dev).                                                          |
 
 ## Quick start
 
@@ -40,7 +41,7 @@ const client = createMaskinportenClient({
   key: { pem: process.env.MASKINPORTEN_PRIVATE_KEY!, kid: process.env.MASKINPORTEN_KID! },
 });
 
-const token = await client.getToken();               // cached + auto-renewed
+const token = await client.getToken(); // cached + auto-renewed
 const altinnToken = await client.exchangeToAltinnToken();
 ```
 
@@ -57,9 +58,9 @@ Point the client at it and everything works offline — perfect for tests and CI
 - **To contribute to this repo:** no. Everything runs against the mock.
 - **To call real Maskinporten:** yes — a Norwegian org number, a signing key (self-generated
   JWK or a virksomhetssertifikat), a registered client, and pre-allocated scopes.
-  **See [docs/prerequisites.md](./docs/prerequisites.md)** for the full checklist, and run the
-  wizard to find the exact scopes for your use-case — `pnpm wizard` in this monorepo, or
-  `npx maskinporten-wizard` once it's published to npm.
+  **See [docs/prerequisites.md](./docs/prerequisites.md)** for the full checklist, and run
+  `npx maskinporten-wizard` (or `pnpm wizard` in this monorepo) to find the exact scopes for
+  your use-case.
 
 ### Wizard CLI — scaffold & diagnose
 
@@ -67,29 +68,25 @@ The **web wizard** is for browsing "which scopes do I need?". The **CLI** does w
 page can't (local keys + real network calls):
 
 - `init` — generate an RS256 keypair, a `.env`, and a ready-to-run client snippet.
-- `doctor` — attempt a **real** token request (against Maskinporten *or* a local
+- `doctor` — attempt a **real** token request (against Maskinporten _or_ a local
   `maskinporten-mock`) and **decode the failure** — the opaque `AUTH-00004`, wrong `aud`,
   ungranted scope, unapproved systembruker, etc.
 
 ```bash
-# From this monorepo (before npm publish):
-pnpm --filter maskinporten-wizard build
-node packages/scopes-catalogue/dist/cli.js init --use-case read-folkeregisteret
-node packages/scopes-catalogue/dist/cli.js doctor      # reads MASKINPORTEN_* env or flags
+npx maskinporten-wizard init --use-case read-folkeregisteret
+npx maskinporten-wizard doctor      # reads MASKINPORTEN_* env or flags
 
-# Once published to npm:
-npx maskinporten-wizard doctor
+# Or from a checkout of this monorepo:
+pnpm --filter maskinporten-wizard build
+node packages/scopes-catalogue/dist/cli.js doctor
 ```
 
 ## Deploy (Azure, free tier)
 
-The **wizard** runs on **Azure Static Web Apps (Free)** — live at
-`https://wonderful-water-0f1b97d03.7.azurestaticapps.net`. The **`maskinporten-mock`
-demo** runs on **Azure Container Apps** (consumption, scale-to-zero) from a public GHCR
-image — live at
-`https://maskinporten-mock.ambitiousflower-539d08fc.swedencentral.azurecontainerapps.io`.
-Infra is Bicep; see **[infra/README.md](./infra/README.md)** for the one-shot `az`
-runbook, the GitHub Actions workflows, and the register-in-advance secrets.
+The **wizard** runs on **Azure Static Web Apps** (Free); the **`maskinporten-mock` demo** runs on
+**Azure Container Apps** (consumption, scale-to-zero) from a public GHCR image — both live-linked at
+the top. Infra is Bicep; see **[infra/README.md](./infra/README.md)** for the one-shot `az` runbook,
+the GitHub Actions workflows, and the register-in-advance secrets.
 
 ## Development
 
