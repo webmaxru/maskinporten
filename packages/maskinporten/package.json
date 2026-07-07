@@ -1,13 +1,27 @@
 {
   "name": "maskinporten",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "TypeScript-first client for Norway's Maskinporten: one-call cached tokens, Altinn token exchange, and systembruker support.",
   "type": "module",
   "license": "MIT",
   "author": "Maxim Salnikov (@webmaxru)",
   "homepage": "https://github.com/webmaxru/maskinporten",
-  "repository": { "type": "git", "url": "git+https://github.com/webmaxru/maskinporten.git", "directory": "packages/maskinporten" },
-  "keywords": ["maskinporten", "altinn", "norway", "digdir", "oauth2", "jwt", "systembruker", "token", "samarbeidsportalen"],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/webmaxru/maskinporten.git",
+    "directory": "packages/maskinporten"
+  },
+  "keywords": [
+    "maskinporten",
+    "altinn",
+    "norway",
+    "digdir",
+    "oauth2",
+    "jwt",
+    "systembruker",
+    "token",
+    "samarbeidsportalen"
+  ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -18,7 +32,10 @@
       "require": "./dist/index.cjs"
     }
   },
-  "files": ["dist", "README.md"],
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",

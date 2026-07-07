@@ -1,13 +1,25 @@
 {
   "name": "maskinporten-mock",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Credential-free local mock of Norway's Maskinporten token endpoint (+ JWKS, Altinn exchange, error scenarios). Docker + npx.",
   "type": "module",
   "license": "MIT",
   "author": "Maxim Salnikov (@webmaxru)",
   "homepage": "https://github.com/webmaxru/maskinporten",
-  "repository": { "type": "git", "url": "git+https://github.com/webmaxru/maskinporten.git", "directory": "packages/maskinporten-mock" },
-  "keywords": ["maskinporten", "mock", "testing", "oauth2", "altinn", "norway", "ci"],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/webmaxru/maskinporten.git",
+    "directory": "packages/maskinporten-mock"
+  },
+  "keywords": [
+    "maskinporten",
+    "mock",
+    "testing",
+    "oauth2",
+    "altinn",
+    "norway",
+    "ci"
+  ],
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
@@ -19,7 +31,10 @@
       "import": "./dist/index.js"
     }
   },
-  "files": ["dist", "README.md"],
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsup",
     "dev": "tsx watch src/cli.ts",

@@ -1,13 +1,24 @@
 {
   "name": "maskinporten-wizard",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Curated catalogue mapping Norwegian public-sector use-cases to Maskinporten scopes, Altinn resource URNs, and registration steps — with a maskinporten-wizard CLI.",
   "type": "module",
   "license": "MIT",
   "author": "Maxim Salnikov (@webmaxru)",
   "homepage": "https://github.com/webmaxru/maskinporten",
-  "repository": { "type": "git", "url": "git+https://github.com/webmaxru/maskinporten.git", "directory": "packages/scopes-catalogue" },
-  "keywords": ["maskinporten", "altinn", "scopes", "norway", "digdir", "wizard"],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/webmaxru/maskinporten.git",
+    "directory": "packages/scopes-catalogue"
+  },
+  "keywords": [
+    "maskinporten",
+    "altinn",
+    "scopes",
+    "norway",
+    "digdir",
+    "wizard"
+  ],
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
@@ -20,7 +31,11 @@
     },
     "./catalogue.yaml": "./data/catalogue.yaml"
   },
-  "files": ["dist", "data", "README.md"],
+  "files": [
+    "dist",
+    "data",
+    "README.md"
+  ],
   "scripts": {
     "gen": "tsx scripts/generate.ts",
     "prebuild": "pnpm run gen",
