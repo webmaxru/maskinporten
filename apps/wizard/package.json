@@ -12,6 +12,7 @@
     "lint": "eslint src"
   },
   "dependencies": {
+    "@webmaxru/cookieless-insights": "^0.1.2",
     "jose": "^5.9.6",
     "maskinporten-wizard": "workspace:*"
   },

@@ -16,6 +16,7 @@
     "typecheck": "pnpm -r typecheck",
     "lint": "eslint .",
     "wizard": "pnpm --filter maskinporten-wizard build && pnpm --filter maskinporten-wizard start",
+    "analytics:report": "pnpm --filter @wizard/site exec cookieless-insights report --resource-group maskinporten-rg --app-insights maskinporten-ai --days 30",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "changeset": "changeset",

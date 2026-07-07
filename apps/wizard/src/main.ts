@@ -1,11 +1,13 @@
 import './style.css';
 import { decodeJwt, decodeProtectedHeader, generateKeyPair, SignJWT } from 'jose';
 import { findUseCase, getCatalogue, type UseCase } from 'maskinporten-wizard';
+import { trackEvent, trackChangeDebounced } from './analytics';
 
 const MOCK_URL =
   'https://maskinporten-mock.ambitiousflower-539d08fc.swedencentral.azurecontainerapps.io';
 
-const byId = <T extends HTMLElement>(id: string): T | null => document.getElementById(id) as T | null;
+const byId = <T extends HTMLElement>(id: string): T | null =>
+  document.getElementById(id) as T | null;
 
 /* -------------------------------------------------------------------------- */
 /* small DOM helper (textContent-safe)                                         */
@@ -87,6 +89,8 @@ function initWizard(): void {
   select.addEventListener('change', () => {
     const useCase = findUseCase(select.value);
     if (useCase) renderUseCase(useCase, result);
+    // Debounced: collapses rapid keyboard arrowing into one event; records the chosen goal.
+    trackChangeDebounced('wizard_select', select.value);
   });
 
   renderUseCase(catalogue.useCases[0], result);
@@ -147,6 +151,7 @@ function initHeroPass(): void {
   if (!button || !passCard || !body) return;
 
   button.addEventListener('click', () => {
+    trackEvent('issue_pass', { source: 'hero' });
     void (async () => {
       button.disabled = true;
       body.textContent = 'Signing a grant and requesting a token…';
@@ -162,15 +167,20 @@ function initHeroPass(): void {
         ];
         for (const [key, value] of lines) {
           const row = el('div');
-          row.append(el('span', { className: 'k', text: `${key.padEnd(8)} ` }), document.createTextNode(value));
+          row.append(
+            el('span', { className: 'k', text: `${key.padEnd(8)} ` }),
+            document.createTextNode(value),
+          );
           body.append(row);
         }
         const token = el('div', { className: 'dim', text: `\n${accessToken.slice(0, 44)}…` });
         body.append(token);
         passCard.classList.add('stamped');
+        trackEvent('issue_pass_result', { ok: true });
       } catch (error) {
         body.textContent =
           error instanceof Error ? error.message : 'Could not reach the mock. Try again shortly.';
+        trackEvent('issue_pass_result', { ok: false });
       } finally {
         button.disabled = false;
       }
@@ -227,7 +237,11 @@ function initPlayground(): void {
       try {
         const result = await issueToken();
         setStatus(true, `Token issued — HTTP 200 · expires in ${result.expiresIn}s`);
-        show({ header: result.header, payload: result.payload, access_token: `${result.accessToken.slice(0, 48)}…` });
+        show({
+          header: result.header,
+          payload: result.payload,
+          access_token: `${result.accessToken.slice(0, 48)}…`,
+        });
       } catch (error) {
         setStatus(false, 'Token request failed');
         show(error instanceof Error ? error.message : 'Request failed.');
@@ -261,8 +275,12 @@ function initPlayground(): void {
 
   for (const button of document.querySelectorAll<HTMLButtonElement>('[data-pg]')) {
     button.addEventListener('click', () => {
-      const action = actions[button.dataset.pg ?? ''];
-      if (action) void action();
+      const key = button.dataset.pg ?? '';
+      const action = actions[key];
+      if (action) {
+        trackEvent('playground_action', { action: key });
+        void action();
+      }
     });
   }
 }
@@ -299,6 +317,7 @@ function initCodeTabs(): void {
     copy.type = 'button';
     copy.setAttribute('aria-label', 'Copy code sample');
     copy.addEventListener('click', () => {
+      trackEvent('copy_code', { panel: panel.id });
       void navigator.clipboard?.writeText(raw).then(() => {
         copy.textContent = 'Copied';
         copy.classList.add('copied');
@@ -322,7 +341,10 @@ function initCodeTabs(): void {
   };
 
   tabs.forEach((tab, i) => {
-    tab.addEventListener('click', () => select(i, false));
+    tab.addEventListener('click', () => {
+      trackEvent('code_tab', { tab: tab.id });
+      select(i, false);
+    });
     tab.addEventListener('keydown', (event) => {
       const last = tabs.length - 1;
       let next: number | null = null;
@@ -338,7 +360,27 @@ function initCodeTabs(): void {
   });
 }
 
+/* -------------------------------------------------------------------------- */
+/* outbound link tracking                                                      */
+/* -------------------------------------------------------------------------- */
+
+function initOutboundLinks(): void {
+  document.addEventListener('click', (event) => {
+    const anchor = (event.target as HTMLElement | null)?.closest?.(
+      'a[href]',
+    ) as HTMLAnchorElement | null;
+    if (!anchor) return;
+    if (/^https?:$/.test(anchor.protocol) && anchor.host !== location.host) {
+      trackEvent('outbound_click', {
+        href: anchor.href,
+        text: anchor.textContent?.trim().slice(0, 60) ?? '',
+      });
+    }
+  });
+}
+
 initWizard();
 initHeroPass();
 initPlayground();
 initCodeTabs();
+initOutboundLinks();

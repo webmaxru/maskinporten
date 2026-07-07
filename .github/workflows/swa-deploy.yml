@@ -25,6 +25,9 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter maskinporten-wizard build
       - run: pnpm --filter @wizard/site build
+        env:
+          # Public client-side ingestion key — injected at build time from a repo VARIABLE (not a secret).
+          VITE_APPINSIGHTS_CONNECTION_STRING: ${{ vars.VITE_APPINSIGHTS_CONNECTION_STRING }}
       - name: Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
         with:
