@@ -267,6 +267,78 @@ function initPlayground(): void {
   }
 }
 
+/* -------------------------------------------------------------------------- */
+/* code sample tabs                                                            */
+/* -------------------------------------------------------------------------- */
+
+function highlightComments(code: HTMLElement): void {
+  const raw = code.textContent ?? '';
+  code.replaceChildren();
+  const lines = raw.split('\n');
+  lines.forEach((line, index) => {
+    if (line.trimStart().startsWith('//')) {
+      code.append(el('span', { className: 'ct', text: line }));
+    } else {
+      code.append(document.createTextNode(line));
+    }
+    if (index < lines.length - 1) code.append(document.createTextNode('\n'));
+  });
+}
+
+function initCodeTabs(): void {
+  const tablist = document.querySelector<HTMLDivElement>('.code-tabs .tablist');
+  const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>('.code-tabs .tab'));
+  const panels = Array.from(document.querySelectorAll<HTMLPreElement>('.code-tabs .code-panel'));
+  if (!tablist || tabs.length === 0 || tabs.length !== panels.length) return;
+
+  for (const panel of panels) {
+    const code = panel.querySelector('code');
+    if (code) highlightComments(code);
+    const raw = code?.textContent ?? '';
+    const copy = el('button', { className: 'copy-btn', text: 'Copy' });
+    copy.type = 'button';
+    copy.setAttribute('aria-label', 'Copy code sample');
+    copy.addEventListener('click', () => {
+      void navigator.clipboard?.writeText(raw).then(() => {
+        copy.textContent = 'Copied';
+        copy.classList.add('copied');
+        window.setTimeout(() => {
+          copy.textContent = 'Copy';
+          copy.classList.remove('copied');
+        }, 1400);
+      });
+    });
+    panel.append(copy);
+  }
+
+  const select = (index: number, focus = true): void => {
+    tabs.forEach((tab, i) => {
+      const active = i === index;
+      tab.setAttribute('aria-selected', String(active));
+      tab.tabIndex = active ? 0 : -1;
+      panels[i].hidden = !active;
+    });
+    if (focus) tabs[index].focus();
+  };
+
+  tabs.forEach((tab, i) => {
+    tab.addEventListener('click', () => select(i, false));
+    tab.addEventListener('keydown', (event) => {
+      const last = tabs.length - 1;
+      let next: number | null = null;
+      if (event.key === 'ArrowRight' || event.key === 'ArrowDown') next = i === last ? 0 : i + 1;
+      else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') next = i === 0 ? last : i - 1;
+      else if (event.key === 'Home') next = 0;
+      else if (event.key === 'End') next = last;
+      if (next !== null) {
+        event.preventDefault();
+        select(next);
+      }
+    });
+  });
+}
+
 initWizard();
 initHeroPass();
 initPlayground();
+initCodeTabs();

@@ -107,6 +107,7 @@
         <a class="brand" href="#top"><span class="gate" aria-hidden="true"></span> Maskinporten Tools</a>
         <nav class="nav-links">
           <a href="#toolkit" class="hide-sm">Toolkit</a>
+          <a href="#code" class="hide-sm">Code</a>
           <a href="#wizard">Wizard</a>
           <a href="#playground">Playground</a>
           <a href="#docs" class="hide-sm">Docs</a>
@@ -203,6 +204,99 @@ live mock — generated and signed in your browser, no credentials.
                 <code>doctor</code> runs a real token request and decodes the failure.
               </p>
               <div class="install">npx maskinporten-wizard doctor</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CODE -->
+      <section class="section" id="code">
+        <div class="container">
+          <div class="section-head">
+            <p class="eyebrow">Client</p>
+            <h2 class="section-title">A token in a few lines</h2>
+            <p class="section-lede">
+              Describe your credentials once, then ask for a token. JWT assertions, caching, renewal,
+              and the two-step Altinn exchange are handled for you. Every tab is real
+              <code>maskinporten</code> code.
+            </p>
+          </div>
+
+          <div class="code-tabs">
+            <div class="tablist" role="tablist" aria-label="maskinporten client examples">
+              <button class="tab" role="tab" id="tab-token" aria-controls="panel-token" aria-selected="true">Get a token</button>
+              <button class="tab" role="tab" id="tab-call" aria-controls="panel-call" aria-selected="false" tabindex="-1">Call an API</button>
+              <button class="tab" role="tab" id="tab-altinn" aria-controls="panel-altinn" aria-selected="false" tabindex="-1">Altinn exchange</button>
+              <button class="tab" role="tab" id="tab-mock" aria-controls="panel-mock" aria-selected="false" tabindex="-1">No credentials</button>
+              <button class="tab" role="tab" id="tab-errors" aria-controls="panel-errors" aria-selected="false" tabindex="-1">Handle errors</button>
+            </div>
+
+            <div class="tabpanels">
+<pre class="code-panel" role="tabpanel" id="panel-token" aria-labelledby="tab-token" tabindex="0"><code>import { createMaskinportenClient } from 'maskinporten';
+
+// Describe your credentials once.
+const client = createMaskinportenClient({
+  env: 'test',
+  clientId: process.env.MASKINPORTEN_CLIENT_ID!,
+  scope: 'skatteetaten:formueinntekt/skattemelding',
+  key: {
+    pem: process.env.MASKINPORTEN_PRIVATE_KEY!,
+    kid: process.env.MASKINPORTEN_KID!,
+  },
+});
+
+// One call. The token is cached and auto-renewed for you.
+const token = await client.getToken();</code></pre>
+<pre class="code-panel" role="tabpanel" id="panel-call" aria-labelledby="tab-call" tabindex="0" hidden><code>// getToken() caches and renews under the hood,
+// so it is safe to call on every request.
+const token = await client.getToken();
+
+// Call the API your scope was granted for.
+const response = await fetch('https://api.example.no/v1/resource', {
+  headers: { Authorization: `Bearer ${token}` },
+});
+
+const data = await response.json();</code></pre>
+<pre class="code-panel" role="tabpanel" id="panel-altinn" aria-labelledby="tab-altinn" tabindex="0" hidden><code>// Add the organisation you act on behalf of...
+const client = createMaskinportenClient({
+  env: 'test',
+  clientId: process.env.MASKINPORTEN_CLIENT_ID!,
+  scope: 'altinn:instances.read',
+  key: {
+    pem: process.env.MASKINPORTEN_PRIVATE_KEY!,
+    kid: process.env.MASKINPORTEN_KID!,
+  },
+  systemUserOrg: '991825827',
+});
+
+// ...and the two-step Maskinporten to Altinn exchange,
+// with its own caching, is a single call.
+const altinnToken = await client.exchangeToAltinnToken();</code></pre>
+<pre class="code-panel" role="tabpanel" id="panel-mock" aria-labelledby="tab-mock" tabindex="0" hidden><code>// Terminal:  npx maskinporten-mock   (listens on :6969)
+import { createMaskinportenClient } from 'maskinporten';
+
+const client = createMaskinportenClient({
+  env: 'test',
+  clientId: 'local-dev',
+  scope: 'demo:scope',
+  key: { pem: process.env.DEV_PRIVATE_KEY!, kid: 'dev' },
+  // Point the client at the local mock. That is the only change.
+  tokenEndpoint: 'http://localhost:6969/token',
+});
+
+// Real JWT-bearer flow, fake gate. No credentials, offline, CI-ready.
+const token = await client.getToken();</code></pre>
+<pre class="code-panel" role="tabpanel" id="panel-errors" aria-labelledby="tab-errors" tabindex="0" hidden><code>import { createMaskinportenClient, MaskinportenError } from 'maskinporten';
+
+try {
+  const token = await client.getToken();
+} catch (error) {
+  if (error instanceof MaskinportenError) {
+    // Opaque codes like AUTH-00004 arrive decoded and readable.
+    console.error(error.code, error.description);
+  }
+  throw error;
+}</code></pre>
             </div>
           </div>
         </div>
